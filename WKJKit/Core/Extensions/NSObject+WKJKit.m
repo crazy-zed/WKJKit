@@ -119,7 +119,7 @@ void doSynchronized(id context, dispatch_block_t block) {
     NSError *error = [self wkj_checkHookWithAspectInfo:info];
     if (error) return error;
     
-    doSynchronized(self, ^{
+    doSynchronized([NSObject class], ^{
         [self wkj_hookOrgMethodWithAspectInfo:info];
     });
     return nil;
@@ -128,11 +128,63 @@ void doSynchronized(id context, dispatch_block_t block) {
 + (void)wkj_removeHookSelector:(SEL)selector
 {
     NSString *aspectID = wkj_aspectID([self class], selector);
-    doSynchronized(self, ^{
+    doSynchronized([NSObject class], ^{
         WKJAspectInfo *info = wkj_classHookInfos([self class])[aspectID];
         if (!info) return;
         [self wkj_reduceOrgMethodWithAspectInfo:info];
     });
+}
+
++ (NSArray<Class> *)wkj_getSubClasses
+{
+    static char kSubClassesAssociatedObject;
+    NSArray<Class> *subClasses = objc_getAssociatedObject(self, &kSubClassesAssociatedObject);
+    if (subClasses) return subClasses;
+    
+    NSMutableArray *resultArray = [NSMutableArray new];
+    int classCount = objc_getClassList(NULL, 0);
+    
+    Class *classes = NULL;
+    classes = (__unsafe_unretained Class *)malloc(sizeof(Class) *classCount);
+    classCount = objc_getClassList(classes, classCount);
+    
+    for (int idx = 0; idx < classCount; idx++) {
+        Class clazz = classes[idx];
+        if (class_getSuperclass(clazz) == [self class]) {
+            [resultArray addObject:clazz];
+        }
+    }
+    
+    free(classes);
+    subClasses = resultArray.copy;
+    objc_setAssociatedObject(self, &kSubClassesAssociatedObject, subClasses, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+    return subClasses;
+}
+
+- (id)wkj_performSelector:(SEL)selector withArguments:(id)firstArgument, ...
+{
+    NSInvocation *invocation = [NSInvocation invocationWithMethodSignature:[self methodSignatureForSelector:selector]];
+    [invocation setTarget:self];
+    [invocation setSelector:selector];
+    
+    if (firstArgument) {
+        va_list valist;
+        va_start(valist, firstArgument);
+        [invocation setArgument:&firstArgument atIndex:2];
+        
+        id currentArgument;
+        NSInteger index = 3;
+        while ((currentArgument = va_arg(valist, id))) {
+            [invocation setArgument:&currentArgument atIndex:index];
+            index++;
+        }
+        va_end(valist);
+    }
+    
+    __unsafe_unretained id returnValue;
+    [invocation invoke];
+    [invocation getReturnValue:&returnValue];
+    return returnValue;
 }
 
 #pragma mark - Private Methods
@@ -169,9 +221,17 @@ static BOOL wkj_hasHookedClass(Class clazz) {
     return wkj_classHookInfos(clazz).allKeys.count;
 }
 
-static void wkj_forwardInvocation(__unsafe_unretained id self, SEL selector, NSInvocation *invocation) {
-    NSString *aspectID = wkj_aspectID([self class], invocation.selector);
-    WKJAspectInfo *info = wkj_classHookInfos([self class])[aspectID];
+static void wkj_forwardInvocation(__unsafe_unretained id target, SEL selector, NSInvocation *invocation) {
+    Class kClass = [target class];
+    WKJAspectInfo *info;
+    
+    // 解决hook了父类，子类调用时不会触发handle的问题
+    while (!info && kClass) {
+        NSString *aspectID = wkj_aspectID(kClass, invocation.selector);
+        info = wkj_classHookInfos(kClass)[aspectID];
+        kClass = class_getSuperclass(kClass);
+    }
+    
     if (info) {
         [info invokeWithOriginalInvocation:invocation];
         return;
@@ -188,20 +248,20 @@ static void wkj_forwardInvocation(__unsafe_unretained id self, SEL selector, NSI
     dispatch_once(&token, ^{
         selectorBlackList = [NSSet setWithObjects:@"retain", @"release", @"autorelease", @"forwardInvocation:", nil];
     });
-
+    
     // step1：检查是否在hook黑名单
     if ([selectorBlackList containsObject:aspectInfo.selectorName]) {
         return NSErrorMake(NSFormatString(@"Selector %@ is in BlackList %@", aspectInfo.selectorName, selectorBlackList), 1000);
     }
-
+    
     // step2：检查是否是dealloc错误位置
     if ([aspectInfo.selectorName isEqualToString:@"dealloc"] &&
         aspectInfo.position != WKJAspectPositionBefore) {
         return NSErrorMake(@"WKJAspectPositionBefore is the only valid position when hooking dealloc.", 1001);
     }
-
-    SEL selector = NSSelectorFromString(aspectInfo.selectorName);
+    
     // step3：压根没实现该方法
+    SEL selector = NSSelectorFromString(aspectInfo.selectorName);
     if (![aspectInfo.clazz instancesRespondToSelector:selector]) {
         return NSErrorMake(NSFormatString(@"Unable to find selector -[%@ %@].", aspectInfo.clazz, aspectInfo.selectorName), 1002);
     }
@@ -214,12 +274,12 @@ static void wkj_forwardInvocation(__unsafe_unretained id self, SEL selector, NSI
     SEL replaceSelector = NSSelectorFromString(aspectInfo.replaceSelectorName);
     SEL orgSelector = NSSelectorFromString(aspectInfo.selectorName);
     IMP orgIMP = class_getMethodImplementation(aspectInfo.clazz, orgSelector);
-    Method orgMethod = class_getInstanceMethod(aspectInfo.clazz, orgSelector);
     
-    // 添加原有方法实现
+    Method orgMethod = class_getInstanceMethod(aspectInfo.clazz, orgSelector);
     const char *typeEncoding = method_getTypeEncoding(orgMethod);
-    if (![aspectInfo.clazz instancesRespondToSelector:replaceSelector] &&
-        ![aspectInfo.clazz respondsToSelector:replaceSelector]) {
+    
+    // 添加替换方法实现(保存替换后的原有实现)
+    if (![aspectInfo.clazz instancesRespondToSelector:replaceSelector]) {
         class_addMethod(aspectInfo.clazz, replaceSelector, orgIMP, typeEncoding);
     }
     
@@ -347,8 +407,142 @@ static void wkj_forwardInvocation(__unsafe_unretained id self, SEL selector, NSI
 
 @end
 
-#pragma mark ******WKJKit_KVC******
+#pragma mark ******WKJKit_KVO******
+@interface WKJObserver : NSObject
 
+@property (nonatomic, weak) id target;
+@property (nonatomic, copy) NSString *path;
+@property (nonatomic, assign) NSKeyValueObservingOptions options;
+
+@property (nonatomic, copy) WKJKitKVOHandler block;
+
++ (instancetype)observerWithTarget:(id)target
+                           keyPath:(NSString *)keyPath
+                           options:(NSKeyValueObservingOptions)options
+                             block:(WKJKitKVOHandler)block;
+
+@end
+
+@implementation WKJObserver
+
++ (instancetype)observerWithTarget:(id)target
+                           keyPath:(NSString *)keyPath
+                           options:(NSKeyValueObservingOptions)options
+                             block:(WKJKitKVOHandler)block
+{
+    WKJObserver *handler = [WKJObserver new];
+    handler.target = target;
+    handler.path = keyPath;
+    handler.options = options;
+    handler.block = block;
+    return handler;
+}
+
+- (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary<NSKeyValueChangeKey,id> *)change context:(void *)context
+{
+    if (!self.block) {
+        if ([self.target respondsToSelector:@selector(observeValueForKeyPath:ofObject:change:context:)]) {
+            [self.target observeValueForKeyPath:keyPath ofObject:object change:change context:context];
+        }
+        return;
+    }
+    
+    BOOL isPrior = [[change objectForKey:NSKeyValueChangeNotificationIsPriorKey] boolValue];
+    if (isPrior) return;
+    
+    NSKeyValueChange changeKind = [[change objectForKey:NSKeyValueChangeKindKey] integerValue];
+    if (changeKind != NSKeyValueChangeSetting) return;
+    
+    id oldVal = [change objectForKey:NSKeyValueChangeOldKey];
+    if (oldVal == [NSNull null]) oldVal = nil;
+    
+    id newVal = [change objectForKey:NSKeyValueChangeNewKey];
+    if (newVal == [NSNull null]) newVal = nil;
+    
+    self.block(keyPath, oldVal, newVal);
+}
+
+@end
+
+@implementation NSObject (WKJKit_KVO)
+
++ (void)load
+{
+    [self wkj_hookSelector:@selector(addObserver:forKeyPath:options:context:) withPosition:WKJAspectPositionInstead usingBlock:^(id<WKJAspectMeta>  _Nonnull aspectMeta) {
+        // 兼容系统的kvo
+        NSString *keyPath = aspectMeta.args[1];
+        WKJObserver *obs = [aspectMeta.target wkj_observers][keyPath];
+        if (obs) {
+            [aspectMeta.originalInvocation invoke]; return;
+        }
+        
+        obs = [WKJObserver observerWithTarget:aspectMeta.args[0]
+                                      keyPath:keyPath
+                                      options:[aspectMeta.args[2] unsignedIntegerValue]
+                                        block:nil];
+        
+        [aspectMeta.target wkj_observers][keyPath] = obs;
+        [aspectMeta.originalInvocation setArgument:&obs atIndex:2];
+        [aspectMeta.originalInvocation invoke];
+    }];
+    
+    WKJAspectHandler removeHandler = ^(id<WKJAspectMeta>  _Nonnull aspectMeta) {
+        // 兼容系统的kvo
+        NSString *keyPath = aspectMeta.args[1];
+        WKJObserver *obs = [aspectMeta.target wkj_observers][keyPath];
+        if (!obs) return;
+        
+        [[aspectMeta.target wkj_observers] removeObjectForKey:keyPath];
+        [aspectMeta.originalInvocation setArgument:&obs atIndex:2];
+        [aspectMeta.originalInvocation invoke];
+    };
+    
+    [self wkj_hookSelector:@selector(removeObserver:forKeyPath:) withPosition:WKJAspectPositionInstead usingBlock:removeHandler];
+    
+    [self wkj_hookSelector:@selector(removeObserver:forKeyPath:context:) withPosition:WKJAspectPositionInstead usingBlock:removeHandler];
+}
+
+- (void)wkj_addObserverForKeyPath:(NSString *)path handler:(WKJKitKVOHandler)handler
+{
+    [self wkj_addObserverForKeyPaths:@[path] handler:handler];
+}
+
+- (void)wkj_addObserverForKeyPaths:(NSArray<NSString *> *)paths handler:(WKJKitKVOHandler)handler
+{
+    [paths enumerateObjectsUsingBlock:^(NSString * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+        NSKeyValueObservingOptions ops = NSKeyValueObservingOptionNew|NSKeyValueObservingOptionOld;
+        WKJObserver *obs = [WKJObserver observerWithTarget:self
+                                                   keyPath:obj
+                                                   options:ops
+                                                     block:handler];
+        [self wkj_observers][obj] = obs;
+        [self addObserver:obs forKeyPath:obj options:obs.options context:NULL];
+    }];
+}
+
+- (void)wkj_removeAllObservers
+{
+    [[self wkj_observers] enumerateKeysAndObjectsUsingBlock:^(NSString * _Nonnull key, WKJObserver * _Nonnull obj, BOOL * _Nonnull stop) {
+        [[self wkj_observers] removeObjectForKey:key];
+        [self removeObserver:obj forKeyPath:key];
+    }];
+}
+
+#pragma mark - Private Methods
+- (NSMutableDictionary<NSString *, WKJObserver *> *)wkj_observers
+{
+    static char kObserversAssociatedObject;
+    NSMutableDictionary *observers = objc_getAssociatedObject(self, &kObserversAssociatedObject);
+    if (!observers) {
+        observers = @{}.mutableCopy;
+        objc_setAssociatedObject(self, &kObserversAssociatedObject, observers, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+    }
+    return observers;
+}
+
+@end
+
+#pragma mark ******WKJKit_KVC******
 @implementation NSObject (WKJKit_KVC)
 
 - (void)wkj_setValue:(id)value forKey:(NSString *)key

@@ -31,9 +31,9 @@ NS_ASSUME_NONNULL_BEGIN
 }
 
 typedef NS_ENUM(NSUInteger, WKJAspectPosition) {
-    WKJAspectPositionAfter   = 0,
+    WKJAspectPositionBefore   = 0,
     WKJAspectPositionInstead,
-    WKJAspectPositionBefore,
+    WKJAspectPositionAfter,
 };
 
 @protocol WKJAspectMeta <NSObject>
@@ -48,6 +48,9 @@ typedef void(^WKJAspectHandler)(id<WKJAspectMeta> aspectMeta);
 
 @interface NSObject (WKJKit)
 
+/// 同步执行相关任务（加锁），⚠️相同context不能嵌套使用，会造成死锁⚠️
+/// @param context 锁的上下文（要用于哪个对象，或者说对哪个对象加锁）
+/// @param block 要执行的任务
 void doSynchronized(id context, dispatch_block_t block);
 
 + (nullable NSError *)wkj_hookSelector:(SEL)selector
@@ -55,6 +58,10 @@ void doSynchronized(id context, dispatch_block_t block);
                             usingBlock:(WKJAspectHandler)block;
 
 + (void)wkj_removeHookSelector:(SEL)selector;
+
++ (NSArray<Class> *)wkj_getSubClasses;
+
+- (id)wkj_performSelector:(SEL)selector withArguments:(id)firstArgument, ...;
 
 @end
 
@@ -71,6 +78,18 @@ void doSynchronized(id context, dispatch_block_t block);
 
 /// coding协议实现
 - (void)wkj_decode:(NSCoder *)decoder;
+
+@end
+
+typedef void(^WKJKitKVOHandler)(NSString *path, id oldVal, id newVal);
+
+@interface NSObject (WKJKit_KVO)
+
+- (void)wkj_addObserverForKeyPath:(NSString *)path handler:(WKJKitKVOHandler)handler;
+
+- (void)wkj_addObserverForKeyPaths:(NSArray<NSString *> *)paths handler:(WKJKitKVOHandler)handler;
+
+- (void)wkj_removeAllObservers;
 
 @end
 

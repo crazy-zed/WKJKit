@@ -9,8 +9,8 @@
 
 @interface UIColor (WKJKit)
 
-+ (UIColor *)colorWithHexString:(NSString *)str alpha:(CGFloat)alpha;
++ (UIColor *)wkj_colorWithHex:(NSString *)str alpha:(CGFloat)alpha;
 
-- (UIColor *)colorWithAlpha:(CGFloat)alpha;
+- (UIColor *)wkj_colorWithAlpha:(CGFloat)alpha;
 
 @end

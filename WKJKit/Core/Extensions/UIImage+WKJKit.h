@@ -10,40 +10,40 @@
 @interface UIImage (WKJKit)
 
 /// 创建一张纯色图片
-+ (UIImage *)imageWithColor:(UIColor *)color;
++ (UIImage *)wkj_imageWithColor:(UIColor *)color;
 
 /// 根据base64生成图片
-+ (UIImage *)imageWithBase64:(NSString *)imgBase64;
++ (UIImage *)wkj_imageWithBase64:(NSString *)imgBase64;
 
 /// 创建一张屏幕截图
-+ (UIImage *)createScreenShootImage;
++ (UIImage *)wkj_createScreenShootImage;
 
 /// 创建一张View截图
-+ (UIImage *)createViewShootWithView:(UIView *)view;
++ (UIImage *)wkj_createViewShootWithView:(UIView *)view;
 
 /// 缩放图片，0.0 < scale < 1.0
-- (UIImage *)scale:(float)scale;
+- (UIImage *)wkj_scale:(float)scale;
 
 /// 改变图片尺寸
-- (UIImage *)reSize:(CGSize)reSize;
+- (UIImage *)wkj_reSize:(CGSize)reSize;
 
 /// 返回圆形图片
-- (UIImage *)circleImage;
+- (UIImage *)wkj_circleImage;
 
 /// 根据图片名返回圆形图片
-+ (UIImage *)circleImageWithName:(NSString *)name;
++ (UIImage *)wkj_circleImageWithName:(NSString *)name;
 
 /// 返回原图片
-- (UIImage *)originalImage;
+- (UIImage *)wkj_originalImage;
 
 /// 返回样板图片
-- (UIImage *)templateImage;
+- (UIImage *)wkj_templateImage;
 
 /// 返回高斯模糊图片
-- (UIImage *)blurryImageWithLevel:(CGFloat)level;
+- (UIImage *)wkj_blurryImageWithLevel:(CGFloat)level;
 
 /// 修正图片转向
-+ (UIImage *)fixOrientation:(UIImage *)aImage;
++ (UIImage *)wkj_fixOrientation:(UIImage *)aImage;
 
 @end
 

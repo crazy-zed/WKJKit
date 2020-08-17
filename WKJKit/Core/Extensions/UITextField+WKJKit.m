@@ -7,8 +7,17 @@
 //
 
 #import "UITextField+WKJKit.h"
+#import "NSObject+WKJKit.h"
 
 @implementation UITextField (WKJKit)
+
++ (void)load
+{
+    [self wkj_hookSelector:NSSelectorFromString(@"dealloc") withPosition:WKJAspectPositionBefore usingBlock:^(id<WKJAspectMeta>  _Nonnull aspectMeta) {
+        [aspectMeta.target removeObserver:aspectMeta.target forKeyPath:@"text"];
+        [[NSNotificationCenter defaultCenter] removeObserver:aspectMeta.target];
+    }];
+}
 
 - (UIColor *)wkj_placeholderColor
 {

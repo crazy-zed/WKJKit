@@ -9,7 +9,7 @@
 
 @implementation UIImage (WKJKit)
 
-+ (UIImage *)imageWithColor:(UIColor *)color
++ (UIImage *)wkj_imageWithColor:(UIColor *)color
 {
     CGRect rect = CGRectMake(0, 0, 1, 1);
     UIGraphicsBeginImageContext(rect.size);
@@ -21,7 +21,7 @@
     return imgae;
 }
 
-+ (UIImage *)imageWithBase64:(NSString *)imgBase64
++ (UIImage *)wkj_imageWithBase64:(NSString *)imgBase64
 {
     // data:image/png;base64,前缀处理
     if ([imgBase64 hasPrefix:@"data:"]) {
@@ -37,7 +37,7 @@
     return photo;
 }
 
-+ (UIImage *)createScreenShootImage
++ (UIImage *)wkj_createScreenShootImage
 {
     CGSize size = [UIScreen mainScreen].bounds.size;
     UIGraphicsBeginImageContextWithOptions(size, YES, [UIScreen mainScreen].scale) ;
@@ -50,7 +50,7 @@
     return createdImage;
 }
 
-+ (UIImage *)createViewShootWithView:(UIView *)view
++ (UIImage *)wkj_createViewShootWithView:(UIView *)view
 {
     UIGraphicsBeginImageContext(view.frame.size);
     [view drawViewHierarchyInRect:view.bounds afterScreenUpdates:NO];
@@ -59,7 +59,7 @@
     return image;
 }
 
-- (UIImage *)scale:(float)scale
+- (UIImage *)wkj_scale:(float)scale
 {
     CGSize size = CGSizeMake(self.size.width * scale, self.size.height * scale);
     UIGraphicsBeginImageContext(size);
@@ -69,7 +69,7 @@
     return scaledImage;
 }
 
-- (UIImage *)reSize:(CGSize)reSize
+- (UIImage *)wkj_reSize:(CGSize)reSize
 {
     UIGraphicsBeginImageContext(CGSizeMake(reSize.width, reSize.height));
     [self drawInRect:CGRectMake(0, 0, reSize.width, reSize.height)];
@@ -78,7 +78,7 @@
     return reSizeImage;
 }
 
-- (UIImage *)circleImage
+- (UIImage *)wkj_circleImage
 {
     UIGraphicsBeginImageContext(self.size);
     CGContextRef ctx = UIGraphicsGetCurrentContext();
@@ -91,22 +91,22 @@
     return image;
 }
 
-+ (UIImage *)circleImageWithName:(NSString *)name
++ (UIImage *)wkj_circleImageWithName:(NSString *)name
 {
-    return [[self imageNamed:name] circleImage];
+    return [[self imageNamed:name] wkj_circleImage];
 }
 
-- (UIImage *)originalImage
+- (UIImage *)wkj_originalImage
 {
     return [self imageWithRenderingMode:UIImageRenderingModeAlwaysOriginal];
 }
 
-- (UIImage *)templateImage
+- (UIImage *)wkj_templateImage
 {
     return [self imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate];
 }
 
-- (UIImage *)blurryImageWithLevel:(CGFloat)level
+- (UIImage *)wkj_blurryImageWithLevel:(CGFloat)level
 {
     CIContext *context = [CIContext contextWithOptions:nil];
     CIImage *ciImage = [CIImage imageWithCGImage:self.CGImage];
@@ -122,8 +122,8 @@
 }
 
 /// 修正图片转向
-+ (UIImage *)fixOrientation:(UIImage *)aImage {
-    
++ (UIImage *)wkj_fixOrientation:(UIImage *)aImage
+{
     // No-op if the orientation is already correct
     if (aImage.imageOrientation == UIImageOrientationUp)
         return aImage;

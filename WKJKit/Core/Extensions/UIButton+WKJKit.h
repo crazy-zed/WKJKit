@@ -10,14 +10,19 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+typedef NS_ENUM(NSUInteger, WKJButtonImageAliment) {
+    WKJButtonImageAlimentLeft,
+    WKJButtonImageAlimentRight,
+    WKJButtonImageAlimentTop,
+    WKJButtonImageAlimentBottom
+};
+
 @interface UIButton (WKJKit)
 
-/**
- 设置图片在上文字在下，必须在设置过title后调用
-
- @param margen 图文间隙
- */
-- (void)setImageAlimentAboveWithMargen:(CGFloat)margen;
+/// 设置图片文字排版方式
+/// @param aliment 图片排版方式
+/// @param margen 图文间隙
+- (void)wkj_setImageAliment:(WKJButtonImageAliment)aliment margen:(CGFloat)margen;
 
 @end
 

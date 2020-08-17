@@ -38,8 +38,8 @@
 - (void)wkj_autoHeightWithMaxHeight:(CGFloat)maxHeight didChanged:(nullable WKJTextViewHeightDidChangedBlock)didChanged
 {
     self.wkj_shouldAutoHeight = YES;
-    self.wkj_maxHeight = MAX(maxHeight, self.height);
-    self.wkj_initHeight = self.height;
+    self.wkj_maxHeight = MAX(maxHeight, self.wkj_height);
+    self.wkj_initHeight = self.wkj_height;
     self.wkj_heightChangeHandler = didChanged;
 }
 
@@ -99,7 +99,7 @@ WKJCopyPropertySynthesizer(wkj_heightChangeHandler, setWkj_heightChangeHandler)
     NSArray *ps = objc_getAssociatedObject(self, &kKvoPropertiesAssociatedObject);
     if (!ps) {
         // 监听text是因为直接赋值的情况
-        ps = @[@"frame", @"bounds", @"font", @"text", @"textAlignment", @"textContainerInset"];
+        ps = @[@"frame", @"bounds", @"font", @"text", @"attributedText", @"textAlignment", @"textContainerInset"];
         objc_setAssociatedObject(self, &kKvoPropertiesAssociatedObject, ps, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
     }
     return ps;
@@ -113,7 +113,7 @@ WKJCopyPropertySynthesizer(wkj_heightChangeHandler, setWkj_heightChangeHandler)
     self.wkj_placeholderView.textAlignment = self.textAlignment;
     self.wkj_placeholderView.textContainerInset = self.textContainerInset;
     
-    if ([keyPath isEqualToString:@"text"]) {
+    if ([keyPath isEqualToString:@"text"] || [keyPath isEqualToString:@"attributedText"]) {
         [self wkj_refreshContentHeight];
     }
 }
@@ -123,13 +123,13 @@ WKJCopyPropertySynthesizer(wkj_heightChangeHandler, setWkj_heightChangeHandler)
     self.wkj_placeholderView.hidden = self.text.length;
     if (!self.wkj_shouldAutoHeight) return;
     
-    CGFloat height = ceil([self sizeThatFits:CGSizeMake(self.width, MAXFLOAT)].height);
+    CGFloat height = ceil([self sizeThatFits:CGSizeMake(self.wkj_width, MAXFLOAT)].height);
     height = height > self.wkj_maxHeight ? self.wkj_maxHeight : height;
     height = height < self.wkj_initHeight ? self.wkj_initHeight : height;
-    if (height == self.height) return;
+    if (height == self.wkj_height) return;
     
-    self.height = height;
-    !self.wkj_heightChangeHandler ?: self.wkj_heightChangeHandler(self.height);
+    self.wkj_height = height;
+    !self.wkj_heightChangeHandler ?: self.wkj_heightChangeHandler(self.wkj_height);
 }
 
 @end

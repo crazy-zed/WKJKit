@@ -10,6 +10,7 @@
 #define WKJCommonDefine_h
 
 #import "WKJDeviceHelper.h"
+#import "UIColor+WKJKit.h"
 #import <objc/runtime.h>
 
 #pragma mark - ******************常用配置******************
@@ -46,7 +47,7 @@
 
 // 颜色
 #define UIRGBColor(r,g,b,a)      [UIColor colorWithRed:(r)/255.0f green:(g)/255.0f blue:(b)/255.0f alpha:(a)]
-#define UIHexColor(hexColor,a)   [UIColor colorWithHexString:hexColor alpha:(a)]
+#define UIHexColor(hexColor,a)   [UIColor wkj_colorWithHex:hexColor alpha:(a)]
 
 // 图片
 #define UIImageMake(name)        [UIImage imageNamed:name]

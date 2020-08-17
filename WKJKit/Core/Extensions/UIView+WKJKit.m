@@ -6,192 +6,199 @@
 //
 
 #import "UIView+WKJKit.h"
-#import <objc/runtime.h>
+#import "WKJCommonDefine.h"
+#import "NSObject+WKJKit.h"
 
 @implementation UIView (WKJKit)
 
-- (CGFloat)cornerRadius
+- (CGFloat)wkj_cornerRadius
 {
     return self.layer.cornerRadius;
 }
 
-- (void)setCornerRadius:(CGFloat)cornerRadius
+- (void)setWkj_cornerRadius:(CGFloat)cornerRadius
 {
     self.layer.masksToBounds = YES;
     self.layer.cornerRadius = cornerRadius;
 }
 
-- (UIColor *)borderColor
+- (UIColor *)wkj_borderColor
 {
     return [UIColor colorWithCGColor:self.layer.borderColor];
 }
 
-- (void)setBorderColor:(UIColor *)borderColor
+- (void)setWkj_borderColor:(UIColor *)borderColor
 {
     self.layer.borderColor = borderColor.CGColor;
 }
 
-- (CGFloat)borderWidth
+- (CGFloat)wkj_borderWidth
 {
     return self.layer.borderWidth;
 }
 
-- (void)setBorderWidth:(CGFloat)borderWidth
+- (void)setWkj_borderWidth:(CGFloat)borderWidth
 {
     self.layer.borderWidth = borderWidth;
 }
 
-- (CGFloat)shadowRadius
+- (CGFloat)wkj_shadowRadius
 {
     return self.layer.shadowRadius;
 }
 
-- (void)setShadowRadius:(CGFloat)shadowRadius
+- (void)setWkj_shadowRadius:(CGFloat)shadowRadius
 {
     self.layer.shadowOffset = CGSizeMake(0, 0);
     self.layer.shadowRadius = shadowRadius;
 }
 
-- (CGFloat)shadowOpacity
+- (CGFloat)wkj_shadowOpacity
 {
     return self.layer.shadowOpacity;
 }
 
-- (void)setShadowOpacity:(CGFloat)shadowOpacity
+- (void)setWkj_shadowOpacity:(CGFloat)shadowOpacity
 {
     self.layer.shadowOpacity = shadowOpacity;
 }
 
-- (UIColor *)shadowColor
+- (UIColor *)wkj_shadowColor
 {
     return [UIColor colorWithCGColor:self.layer.shadowColor];
 }
 
-- (void)setShadowColor:(UIColor *)shadowColor
+- (void)setWkj_shadowColor:(UIColor *)shadowColor
 {
     self.layer.shadowColor = shadowColor.CGColor;
 }
 
 #pragma mark - Frame
-- (CGFloat)x
+- (CGFloat)wkj_x
 {
     return self.frame.origin.x;
 }
 
-- (void)setX:(CGFloat)value
+- (void)setWkj_x:(CGFloat)value
 {
     CGRect frame = self.frame;
     frame.origin.x = value;
     self.frame = frame;
 }
 
-- (CGFloat)y
+- (CGFloat)wkj_y
 {
     return self.frame.origin.y;
 }
 
-- (void)setY:(CGFloat)value
+- (void)setWkj_y:(CGFloat)value
 {
     CGRect frame = self.frame;
     frame.origin.y = value;
     self.frame = frame;
 }
 
-- (CGPoint)origin
+- (CGPoint)wkj_origin
 {
     return self.frame.origin;
 }
 
-- (void)setOrigin:(CGPoint)origin
+- (void)setWkj_origin:(CGPoint)origin
 {
     CGRect frame = self.frame;
     frame.origin = origin;
     self.frame = frame;
 }
 
-- (CGFloat)width
+- (CGFloat)wkj_width
 {
     return self.frame.size.width;
 }
 
-- (void)setWidth:(CGFloat)width
+- (void)setWkj_width:(CGFloat)width
 {
     CGRect frame = self.frame;
     frame.size.width = width;
     self.frame = frame;
 }
 
-- (CGFloat)height
+- (CGFloat)wkj_height
 {
     return self.frame.size.height;
 }
 
-- (void)setHeight:(CGFloat)height
+- (void)setWkj_height:(CGFloat)height
 {
     CGRect frame = self.frame;
     frame.size.height = height;
     self.frame = frame;
 }
 
-- (CGSize)size
+- (CGSize)wkj_size
 {
     return self.frame.size;
 }
 
-- (void)setSize:(CGSize)size
+- (void)setWkj_size:(CGSize)size
 {
     CGRect frame = self.frame;
     frame.size = size;
     self.frame = frame;
 }
 
-- (CGFloat)centerX
+- (CGFloat)wkj_centerX
 {
     return self.center.x;
 }
 
-- (void)setCenterX:(CGFloat)centerX
+- (void)setWkj_centerX:(CGFloat)centerX
 {
     CGPoint center = self.center;
     center.x = centerX;
     self.center = center;
 }
 
-- (CGFloat)centerY
+- (CGFloat)wkj_centerY
 {
     return self.center.y;
 }
 
-- (void)setCenterY:(CGFloat)centerY
+- (void)setWkj_centerY:(CGFloat)centerY
 {
     CGPoint center = self.center;
     center.y = centerY;
     self.center = center;
 }
 
-- (UIViewController *)responesVC
+#pragma mark - Response
+- (UIViewController *)wkj_responesVC
 {
-    for (UIView *next = self.superview; next; next = next.superview) {
-        UIResponder *nextResponder = [next nextResponder];
-        if ([nextResponder isKindOfClass:[UIViewController class]]) {
-            return (UIViewController *)nextResponder;
+    UIResponder *next = [self nextResponder];
+    do {
+        if ([next isKindOfClass:UIViewController.class]) {
+            return (UIViewController *)next;
         }
-    }
+        next = [next nextResponder];
+    } while (next);
     return nil;
 }
 
 #pragma mark - Methods
-- (void)addGradientColor:(UIColor *)color to:(UIColor *)toColor dir:(WKJGradientDirection)dir
+- (void)wkj_addGradientColors:(NSArray<UIColor *> *)colors direct:(WKJGradientDirection)direct
 {
-    if (!color || !toColor) return;
+    if (!colors.count) return;
     
-    [self removeGradientColor];
+    [self wkj_removeGradientColor];
     
     CAGradientLayer *gradientLayer  = [[CAGradientLayer alloc] init];
     gradientLayer.frame = self.bounds;
-    gradientLayer.colors = @[(id)color.CGColor,(id)toColor.CGColor];
+    NSMutableArray *cgColors = @[].mutableCopy;
+    for (UIColor *color in colors) {
+        [cgColors addObject:(id)color.CGColor];
+    }
+    gradientLayer.colors = cgColors;
     gradientLayer.startPoint = CGPointMake(0, 0);
-    switch (dir) {
+    switch (direct) {
         case WKJGradientDirectionHorizontal:
             gradientLayer.endPoint = CGPointMake(1, 0);
             break;
@@ -207,7 +214,7 @@
     [self.layer insertSublayer:gradientLayer atIndex:0];
 }
 
-- (void)removeGradientColor
+- (void)wkj_removeGradientColor
 {
     CAGradientLayer *gradientLayer = [self gradientLayer];
     if (!gradientLayer) return;
@@ -215,7 +222,7 @@
     gradientLayer = nil;
 }
 
-- (void)addCornerWithRadius:(CGFloat)radius type:(UIRectCorner)type
+- (void)wkj_addCornerWithRadius:(CGFloat)radius type:(UIRectCorner)type
 {
     if (self.layer.mask) {
         [self.layer.mask removeFromSuperlayer];
@@ -233,12 +240,39 @@
 - (CAGradientLayer *)gradientLayer
 {
     for (CALayer *sublayer in self.layer.sublayers) {
-        if (![sublayer isKindOfClass:CAGradientLayer.class]) {
-            continue;
+        if ([sublayer isKindOfClass:CAGradientLayer.class]) {
+            return (CAGradientLayer *)sublayer;
         }
-        return (CAGradientLayer *)sublayer;
     }
     return nil;
+}
+
+@end
+
+@implementation UIControl (WKJKit)
+
+WKJInsetsPropertySynthesizer(wkj_responseEdge, setWkj_responseEdge)
+
++ (void)load
+{
+    [self wkj_hookSelector:@selector(pointInside:withEvent:) withPosition:WKJAspectPositionInstead usingBlock:^(id<WKJAspectMeta>  _Nonnull aspectMeta) {
+        CGPoint point = [aspectMeta.args.firstObject CGPointValue];
+        UIEvent *event = aspectMeta.args.lastObject;
+
+        if (event.type != UIEventTypeTouches) {
+            [aspectMeta.originalInvocation invoke]; return;
+        }
+
+        UIEdgeInsets rspEdge = [aspectMeta.target wkj_responseEdge];
+        CGRect rspRect = CGRectMake(CGRectGetMinX([aspectMeta.target bounds]) + rspEdge.left,
+                                    CGRectGetMinY([aspectMeta.target bounds]) + rspEdge.top,
+                                    [aspectMeta.target wkj_width] - (rspEdge.left + rspEdge.right),
+                                    [aspectMeta.target wkj_height] - (rspEdge.top + rspEdge.bottom));
+
+        BOOL result = CGRectContainsPoint(rspRect, point);
+        [aspectMeta.originalInvocation invoke];
+        [aspectMeta.originalInvocation setReturnValue:&result];
+    }];
 }
 
 @end

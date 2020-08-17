@@ -14,31 +14,37 @@ typedef NS_ENUM(NSUInteger, WKJGradientDirection) {
 
 @interface UIView (WKJKit)
 
-@property(nonatomic, assign) IBInspectable CGFloat cornerRadius;
-@property(nonatomic, assign) IBInspectable CGFloat borderWidth;
-@property(nonatomic, strong) IBInspectable UIColor *borderColor;
+@property(nonatomic, assign) IBInspectable CGFloat wkj_cornerRadius;
+@property(nonatomic, assign) IBInspectable CGFloat wkj_borderWidth;
+@property(nonatomic, strong) IBInspectable UIColor *wkj_borderColor;
 
-@property(nonatomic, assign) IBInspectable CGFloat shadowRadius;
-@property(nonatomic, assign) IBInspectable CGFloat shadowOpacity;
-@property(nonatomic, assign) IBInspectable UIColor *shadowColor;
+@property(nonatomic, assign) IBInspectable CGFloat wkj_shadowRadius;
+@property(nonatomic, assign) IBInspectable CGFloat wkj_shadowOpacity;
+@property(nonatomic, assign) IBInspectable UIColor *wkj_shadowColor;
 
-@property (assign, nonatomic) CGFloat x;
-@property (assign, nonatomic) CGFloat y;
-@property (assign, nonatomic) CGPoint origin;
+@property (assign, nonatomic) CGFloat wkj_x;
+@property (assign, nonatomic) CGFloat wkj_y;
+@property (assign, nonatomic) CGPoint wkj_origin;
 
-@property (assign, nonatomic) CGFloat width;
-@property (assign, nonatomic) CGFloat height;
-@property (assign, nonatomic) CGSize  size;
+@property (assign, nonatomic) CGFloat wkj_width;
+@property (assign, nonatomic) CGFloat wkj_height;
+@property (assign, nonatomic) CGSize  wkj_size;
 
-@property (assign, nonatomic) CGFloat centerX;
-@property (assign, nonatomic) CGFloat centerY;
+@property (assign, nonatomic) CGFloat wkj_centerX;
+@property (assign, nonatomic) CGFloat wkj_centerY;
 
-@property (nonatomic, strong, readonly) UIViewController *responesVC;
+@property (nonatomic, strong, readonly) UIViewController *wkj_responesVC;
 
-- (void)addGradientColor:(UIColor *)color to:(UIColor *)toColor dir:(WKJGradientDirection)dir;
+- (void)wkj_addGradientColors:(NSArray<UIColor *> *)colors direct:(WKJGradientDirection)direct;
 
-- (void)removeGradientColor;
+- (void)wkj_removeGradientColor;
 
-- (void)addCornerWithRadius:(CGFloat)radius type:(UIRectCorner)type;
+- (void)wkj_addCornerWithRadius:(CGFloat)radius type:(UIRectCorner)type;
+
+@end
+
+@interface UIControl (WKJKit)
+
+@property (nonatomic, assign) UIEdgeInsets wkj_responseEdge;
 
 @end

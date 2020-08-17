@@ -9,7 +9,7 @@
 
 @implementation UIColor (WKJKit)
 
-+ (UIColor *)colorWithHexString:(NSString *)str alpha:(CGFloat)alpha
++ (UIColor *)wkj_colorWithHex:(NSString *)str alpha:(CGFloat)alpha
 {
     // 去除空格并大写
     str = [[str stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]] uppercaseString];
@@ -44,7 +44,7 @@
     return [UIColor colorWithRed:((float) r / 255.0f) green:((float) g / 255.0f) blue:((float) b / 255.0f) alpha:alpha];
 }
 
-- (UIColor *)colorWithAlpha:(CGFloat)alpha
+- (UIColor *)wkj_colorWithAlpha:(CGFloat)alpha
 {
     CGFloat red = 0.0, green = 0.0, blue = 0.0, colorAlpha = 0.0;
     if ([self respondsToSelector:@selector(getRed:green:blue:alpha:)]) {
