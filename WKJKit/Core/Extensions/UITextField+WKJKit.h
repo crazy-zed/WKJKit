@@ -14,6 +14,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 @property (nonatomic, strong, nullable) IBInspectable UIColor *wkj_placeholderColor;
 
+@property (nonatomic, assign) IBInspectable NSInteger wkj_textLimit;
+
 @end
 
 NS_ASSUME_NONNULL_END

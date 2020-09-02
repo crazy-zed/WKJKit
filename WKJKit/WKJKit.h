@@ -39,12 +39,36 @@ static NSString * const WKJKit_VERSION = @"1.0.0";
 #import "UIView+WKJKit.h"
 #endif
 
+#if __has_include("WKJAlert.h")
+#import "WKJAlert.h"
+#endif
+
+#if __has_include("WKJBaseRequest.h")
+#import "WKJBaseRequest.h"
+#endif
+
 #if __has_include("WKJCommonDefine.h")
 #import "WKJCommonDefine.h"
 #endif
 
 #if __has_include("WKJDeviceHelper.h")
 #import "WKJDeviceHelper.h"
+#endif
+
+#if __has_include("WKJNetworking.h")
+#import "WKJNetworking.h"
+#endif
+
+#if __has_include("WKJRequestProtocol.h")
+#import "WKJRequestProtocol.h"
+#endif
+
+#if __has_include("WKJRouter+Annotation.h")
+#import "WKJRouter+Annotation.h"
+#endif
+
+#if __has_include("WKJRouter.h")
+#import "WKJRouter.h"
 #endif
 
 #endif /* WKJKit_h */

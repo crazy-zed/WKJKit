@@ -85,9 +85,15 @@ typedef void(^WKJKitKVOHandler)(NSString *path, id oldVal, id newVal);
 
 @interface NSObject (WKJKit_KVO)
 
+- (NSArray<NSString *> *)wkj_getAllObserverPaths;
+
 - (void)wkj_addObserverForKeyPath:(NSString *)path handler:(WKJKitKVOHandler)handler;
 
 - (void)wkj_addObserverForKeyPaths:(NSArray<NSString *> *)paths handler:(WKJKitKVOHandler)handler;
+
+- (void)wkj_removeObserverForKeyPath:(NSString *)path;
+
+- (void)wkj_removeObserverForKeyPaths:(NSArray<NSString *> *)paths;
 
 - (void)wkj_removeAllObservers;
 

@@ -7,9 +7,8 @@
 
 #import "NSInvocation+WKJKit.h"
 #import "WKJCommonDefine.h"
-#import <objc/runtime.h>
 
-#define WRAP_AND_RETURN(type) do { type val = 0; [self getArgument:&val atIndex:(NSInteger)index]; return @(val); } while (0)
+#import <objc/runtime.h>
 
 @implementation NSInvocation (WKJKit)
 
@@ -24,9 +23,9 @@
     if (argType[0] == _C_CONST) argType++;
     
     if (isObjectTypeEncoding(argType) || isClassTypeEncoding(argType)) {
-        __autoreleasing id returnObj;
-        [self getArgument:&returnObj atIndex:(NSInteger)index];
-        return returnObj;
+        __autoreleasing id obj;
+        [self getArgument:&obj atIndex:(NSInteger)index];
+        return obj;
     }
     
     if (isSelectorTypeEncoding(argType)) {
@@ -35,6 +34,7 @@
         return NSStringFromSelector(selector);
     }
     
+#define WRAP_AND_RETURN(type) do { type val = 0; [self getArgument:&val atIndex:(NSInteger)index]; return @(val); } while (0)
     // 以下基本类型全部以NSNumber形式返回
     if (isCharTypeEncoding(argType)) {
         WRAP_AND_RETURN(char);
@@ -78,6 +78,7 @@
         
         return [NSValue valueWithBytes:valueBytes objCType:argType];
     }
+#undef WRAP_AND_RETURN
     return nil;
 }
 

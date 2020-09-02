@@ -38,10 +38,27 @@ Pod::Spec.new do |s|
 
   s.subspec 'Foundation' do |ss|
     ss.source_files = 'WKJKit/Foundation'
+
+    ss.subspec 'WKJRouter' do |sss|
+      sss.source_files = 'WKJKit/Foundation/WKJRouter'
+      sss.dependency 'WKJKit/Core'
+    end
+
+    ss.subspec 'WKJNetworking' do |sss|
+      sss.source_files = 'WKJKit/Foundation/WKJNetworking'
+      sss.dependency 'WKJKit/Core'
+      sss.dependency 'AFNetworking'
+    end
   end
 
   s.subspec 'UIKit' do |ss|
     ss.source_files = 'WKJKit/UIKit'
+
+    ss.subspec 'WKJAlert' do |sss|
+      sss.source_files = 'WKJKit/UIKit/WKJAlert'
+      sss.dependency 'WKJKit/Core'
+      sss.dependency 'Masonry'
+    end
   end
 
 end

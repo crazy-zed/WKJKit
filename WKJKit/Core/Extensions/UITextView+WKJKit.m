@@ -13,6 +13,7 @@
 
 @interface UITextView ()
 
+@property (nonatomic, strong) UITextView *wkj_placeholderView;
 @property (nonatomic, assign) BOOL wkj_shouldAutoHeight;
 @property (nonatomic, assign) CGFloat wkj_maxHeight;
 @property (nonatomic, assign) CGFloat wkj_initHeight;
@@ -25,14 +26,30 @@
 
 + (void)load
 {
-    [self wkj_hookSelector:NSSelectorFromString(@"dealloc") withPosition:WKJAspectPositionBefore usingBlock:^(id<WKJAspectMeta>  _Nonnull aspectMeta) {
-        for (NSString *path in [aspectMeta.target wkj_kvoProperties]) {
-            @try {
-                [aspectMeta.target removeObserver:aspectMeta.target forKeyPath:path];
-            } @catch (NSException *exception) {}
-        }
-        [[NSNotificationCenter defaultCenter] removeObserver:aspectMeta.target];
-    }];
+    WKJAspectHandler handler = ^(id<WKJAspectMeta>  _Nonnull aspectMeta) {
+        UITextView *textView = (UITextView *)aspectMeta.target;
+        
+        Weakify(textView);
+        [textView wkj_addObserverForKeyPaths:textView.wkj_kvoProperties handler:^(NSString * _Nonnull path, id  _Nonnull oldVal, id  _Nonnull newVal) {
+            [weak_textView wkj_refreshPlaceholderView];
+        }];
+
+        [[NSNotificationCenter defaultCenter] addObserver:textView selector:@selector(wkj_refreshContentHeight) name:UITextViewTextDidChangeNotification object:nil];
+    };
+
+    [self wkj_hookSelector:@selector(initWithFrame:) withPosition:WKJAspectPositionAfter usingBlock:handler];
+    [self wkj_hookSelector:@selector(initWithCoder:) withPosition:WKJAspectPositionAfter usingBlock:handler];
+    
+    Method dealoc = class_getInstanceMethod(self.class, NSSelectorFromString(@"dealloc"));
+    Method myDealloc = class_getInstanceMethod(self.class, @selector(wkj_dealloc));
+    method_exchangeImplementations(dealoc, myDealloc);
+}
+
+- (void)wkj_dealloc
+{
+    [self wkj_removeAllObservers];
+    [[NSNotificationCenter defaultCenter] removeObserver:self];
+    [self wkj_dealloc];
 }
 
 - (void)wkj_autoHeightWithMaxHeight:(CGFloat)maxHeight didChanged:(nullable WKJTextViewHeightDidChangedBlock)didChanged
@@ -48,9 +65,16 @@ WKJBOOLPropertySynthesizer(wkj_shouldAutoHeight, setWkj_shouldAutoHeight)
 WKJCGFloatPropertySynthesizer(wkj_maxHeight, setWkj_maxHeight)
 WKJCGFloatPropertySynthesizer(wkj_initHeight, setWkj_initHeight)
 WKJCopyPropertySynthesizer(wkj_heightChangeHandler, setWkj_heightChangeHandler)
+WKJStrongPropertySynthesizer(wkj_placeholderView, setWkj_placeholderView)
+
+WKJIntegerPropertySynthesizer(wkj_textLimit, setWkj_textLimit)
 
 - (void)setWkj_placeholder:(NSString *)placeholder
 {
+    if (!self.wkj_placeholderView) {
+        self.wkj_placeholderView = [self wkj_createPlaceholderView];
+        [self wkj_refreshPlaceholderView];
+    }
     self.wkj_placeholderView.hidden = !placeholder.length;
     self.wkj_placeholderView.text = placeholder;
 }
@@ -71,25 +95,15 @@ WKJCopyPropertySynthesizer(wkj_heightChangeHandler, setWkj_heightChangeHandler)
 }
 
 #pragma mark - Private Methods
-- (UITextView *)wkj_placeholderView
+- (UITextView *)wkj_createPlaceholderView
 {
     // 为了让占位文字和textView的实际文字位置能够完全一致，这里用UITextView
-    static char kPlaceholderViewAssociatedObject;
-    UITextView *placeholderView = objc_getAssociatedObject(self, &kPlaceholderViewAssociatedObject);
-    if (!placeholderView) {
-        placeholderView = [[UITextView alloc] initWithFrame:self.bounds];
-        placeholderView.scrollEnabled = placeholderView.userInteractionEnabled = NO;
-        placeholderView.textColor = [UIColor lightGrayColor];
-        placeholderView.backgroundColor = [UIColor clearColor];
-        [self addSubview:placeholderView];
-        
-        HandleNotifaction(UITextViewTextDidChangeNotification, @selector(wkj_refreshContentHeight));
-        for (NSString *path in self.wkj_kvoProperties) {
-            [self addObserver:self forKeyPath:path options:NSKeyValueObservingOptionNew context:nil];
-        }
-        
-        objc_setAssociatedObject(self, &kPlaceholderViewAssociatedObject, placeholderView, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
-    }
+    UITextView *placeholderView = [[UITextView alloc] initWithFrame:self.bounds];;
+    placeholderView.scrollEnabled = placeholderView.userInteractionEnabled = NO;
+    placeholderView.textColor = [UIColor lightGrayColor];
+    placeholderView.backgroundColor = [UIColor clearColor];
+    placeholderView.hidden = YES;
+    [self addSubview:placeholderView];
     return placeholderView;
 }
 
@@ -99,27 +113,29 @@ WKJCopyPropertySynthesizer(wkj_heightChangeHandler, setWkj_heightChangeHandler)
     NSArray *ps = objc_getAssociatedObject(self, &kKvoPropertiesAssociatedObject);
     if (!ps) {
         // 监听text是因为直接赋值的情况
-        ps = @[@"frame", @"bounds", @"font", @"text", @"attributedText", @"textAlignment", @"textContainerInset"];
+        ps = @[@"frame", @"bounds", @"font", @"text", @"textAlignment", @"textContainerInset"];
         objc_setAssociatedObject(self, &kKvoPropertiesAssociatedObject, ps, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
     }
     return ps;
 }
 
-- (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary<NSKeyValueChangeKey,id> *)change context:(void *)context
+- (void)wkj_refreshPlaceholderView
 {
-    // 同步self的属性
     self.wkj_placeholderView.frame = self.bounds;
     self.wkj_placeholderView.font = self.font;
     self.wkj_placeholderView.textAlignment = self.textAlignment;
     self.wkj_placeholderView.textContainerInset = self.textContainerInset;
-    
-    if ([keyPath isEqualToString:@"text"] || [keyPath isEqualToString:@"attributedText"]) {
-        [self wkj_refreshContentHeight];
-    }
+    [self wkj_refreshContentHeight];
 }
 
 - (void)wkj_refreshContentHeight
 {
+    if (self.wkj_textLimit > 0
+        && self.text.length > self.wkj_textLimit
+        && ![self markedTextRange]) {
+        self.text = [self.text substringToIndex:self.wkj_textLimit];
+    }
+    
     self.wkj_placeholderView.hidden = self.text.length;
     if (!self.wkj_shouldAutoHeight) return;
     

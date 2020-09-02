@@ -7,6 +7,18 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		950014BF24F4E48500E47FBA /* WKJBaseRequest.h in Headers */ = {isa = PBXBuildFile; fileRef = 950014B924F4E48500E47FBA /* WKJBaseRequest.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		950014C124F4E48500E47FBA /* WKJNetworking.h in Headers */ = {isa = PBXBuildFile; fileRef = 950014BB24F4E48500E47FBA /* WKJNetworking.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		950014C224F4E48500E47FBA /* WKJRequestProtocol.h in Headers */ = {isa = PBXBuildFile; fileRef = 950014BC24F4E48500E47FBA /* WKJRequestProtocol.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		950014C324F4E48500E47FBA /* WKJNetworking.m in Sources */ = {isa = PBXBuildFile; fileRef = 950014BD24F4E48500E47FBA /* WKJNetworking.m */; };
+		950014C424F4E48500E47FBA /* WKJBaseRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = 950014BE24F4E48500E47FBA /* WKJBaseRequest.m */; };
+		950014CA24F4E49000E47FBA /* WKJRouter+Annotation.m in Sources */ = {isa = PBXBuildFile; fileRef = 950014C524F4E49000E47FBA /* WKJRouter+Annotation.m */; };
+		950014CB24F4E49000E47FBA /* scan.py in Resources */ = {isa = PBXBuildFile; fileRef = 950014C624F4E49000E47FBA /* scan.py */; };
+		950014CC24F4E49000E47FBA /* WKJRouter.m in Sources */ = {isa = PBXBuildFile; fileRef = 950014C724F4E49000E47FBA /* WKJRouter.m */; };
+		950014CD24F4E49000E47FBA /* WKJRouter+Annotation.h in Headers */ = {isa = PBXBuildFile; fileRef = 950014C824F4E49000E47FBA /* WKJRouter+Annotation.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		950014CE24F4E49000E47FBA /* WKJRouter.h in Headers */ = {isa = PBXBuildFile; fileRef = 950014C924F4E49000E47FBA /* WKJRouter.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		950014D624F5058C00E47FBA /* WKJAlert.m in Sources */ = {isa = PBXBuildFile; fileRef = 950014D424F5058C00E47FBA /* WKJAlert.m */; };
+		950014D724F5058C00E47FBA /* WKJAlert.h in Headers */ = {isa = PBXBuildFile; fileRef = 950014D524F5058C00E47FBA /* WKJAlert.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		95D8F7EB24E115CD003BE805 /* WKJKit.h in Headers */ = {isa = PBXBuildFile; fileRef = 95D8F7E924E115CD003BE805 /* WKJKit.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		95D8F80324E11607003BE805 /* WKJDeviceHelper.h in Headers */ = {isa = PBXBuildFile; fileRef = 95D8F7ED24E11607003BE805 /* WKJDeviceHelper.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		95D8F81424E11607003BE805 /* WKJCommonDefine.h in Headers */ = {isa = PBXBuildFile; fileRef = 95D8F7FF24E11607003BE805 /* WKJCommonDefine.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -41,6 +53,18 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		950014B924F4E48500E47FBA /* WKJBaseRequest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKJBaseRequest.h; sourceTree = "<group>"; };
+		950014BB24F4E48500E47FBA /* WKJNetworking.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKJNetworking.h; sourceTree = "<group>"; };
+		950014BC24F4E48500E47FBA /* WKJRequestProtocol.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKJRequestProtocol.h; sourceTree = "<group>"; };
+		950014BD24F4E48500E47FBA /* WKJNetworking.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = WKJNetworking.m; sourceTree = "<group>"; };
+		950014BE24F4E48500E47FBA /* WKJBaseRequest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = WKJBaseRequest.m; sourceTree = "<group>"; };
+		950014C524F4E49000E47FBA /* WKJRouter+Annotation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "WKJRouter+Annotation.m"; sourceTree = "<group>"; };
+		950014C624F4E49000E47FBA /* scan.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; path = scan.py; sourceTree = "<group>"; };
+		950014C724F4E49000E47FBA /* WKJRouter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = WKJRouter.m; sourceTree = "<group>"; };
+		950014C824F4E49000E47FBA /* WKJRouter+Annotation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "WKJRouter+Annotation.h"; sourceTree = "<group>"; };
+		950014C924F4E49000E47FBA /* WKJRouter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKJRouter.h; sourceTree = "<group>"; };
+		950014D424F5058C00E47FBA /* WKJAlert.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = WKJAlert.m; sourceTree = "<group>"; };
+		950014D524F5058C00E47FBA /* WKJAlert.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKJAlert.h; sourceTree = "<group>"; };
 		95D8F7E824E115CD003BE805 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		95D8F7E924E115CD003BE805 /* WKJKit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKJKit.h; sourceTree = "<group>"; };
 		95D8F7ED24E11607003BE805 /* WKJDeviceHelper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKJDeviceHelper.h; sourceTree = "<group>"; };
@@ -85,6 +109,39 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		950014B724F4DC3B00E47FBA /* WKJRouter */ = {
+			isa = PBXGroup;
+			children = (
+				950014C624F4E49000E47FBA /* scan.py */,
+				950014C924F4E49000E47FBA /* WKJRouter.h */,
+				950014C724F4E49000E47FBA /* WKJRouter.m */,
+				950014C824F4E49000E47FBA /* WKJRouter+Annotation.h */,
+				950014C524F4E49000E47FBA /* WKJRouter+Annotation.m */,
+			);
+			path = WKJRouter;
+			sourceTree = "<group>";
+		};
+		950014B824F4DC4700E47FBA /* WKJNetworking */ = {
+			isa = PBXGroup;
+			children = (
+				950014BC24F4E48500E47FBA /* WKJRequestProtocol.h */,
+				950014B924F4E48500E47FBA /* WKJBaseRequest.h */,
+				950014BE24F4E48500E47FBA /* WKJBaseRequest.m */,
+				950014BB24F4E48500E47FBA /* WKJNetworking.h */,
+				950014BD24F4E48500E47FBA /* WKJNetworking.m */,
+			);
+			path = WKJNetworking;
+			sourceTree = "<group>";
+		};
+		950014D324F504F700E47FBA /* WKJAlert */ = {
+			isa = PBXGroup;
+			children = (
+				950014D524F5058C00E47FBA /* WKJAlert.h */,
+				950014D424F5058C00E47FBA /* WKJAlert.m */,
+			);
+			path = WKJAlert;
+			sourceTree = "<group>";
+		};
 		95D8F7EC24E11607003BE805 /* Core */ = {
 			isa = PBXGroup;
 			children = (
@@ -122,6 +179,8 @@
 		95D8F80124E11607003BE805 /* Foundation */ = {
 			isa = PBXGroup;
 			children = (
+				950014B724F4DC3B00E47FBA /* WKJRouter */,
+				950014B824F4DC4700E47FBA /* WKJNetworking */,
 			);
 			path = Foundation;
 			sourceTree = "<group>";
@@ -129,6 +188,7 @@
 		95D8F80224E11607003BE805 /* UIKit */ = {
 			isa = PBXGroup;
 			children = (
+				950014D324F504F700E47FBA /* WKJAlert */,
 			);
 			path = UIKit;
 			sourceTree = "<group>";
@@ -169,8 +229,14 @@
 				95D8F82D24E1164B003BE805 /* UITextView+WKJKit.h in Headers */,
 				95D8F83324E1164B003BE805 /* UIImage+WKJKit.h in Headers */,
 				95D8F83024E1164B003BE805 /* UIView+WKJKit.h in Headers */,
+				950014BF24F4E48500E47FBA /* WKJBaseRequest.h in Headers */,
+				950014C124F4E48500E47FBA /* WKJNetworking.h in Headers */,
+				950014C224F4E48500E47FBA /* WKJRequestProtocol.h in Headers */,
+				950014CE24F4E49000E47FBA /* WKJRouter.h in Headers */,
+				950014CD24F4E49000E47FBA /* WKJRouter+Annotation.h in Headers */,
 				95D8F83424E1164B003BE805 /* UIColor+WKJKit.h in Headers */,
 				95D8F82C24E1164B003BE805 /* UIButton+WKJKit.h in Headers */,
+				950014D724F5058C00E47FBA /* WKJAlert.h in Headers */,
 				95D8F83124E1164B003BE805 /* UITextField+WKJKit.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -256,6 +322,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				950014CB24F4E49000E47FBA /* scan.py in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -293,12 +360,17 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				950014CA24F4E49000E47FBA /* WKJRouter+Annotation.m in Sources */,
 				95D8F83524E1164B003BE805 /* UITextView+WKJKit.m in Sources */,
 				95D8F81524E11607003BE805 /* WKJDeviceHelper.m in Sources */,
+				950014D624F5058C00E47FBA /* WKJAlert.m in Sources */,
 				95D8F82B24E1164B003BE805 /* NSObject+WKJKit.m in Sources */,
 				95D8F82E24E1164B003BE805 /* UITextField+WKJKit.m in Sources */,
+				950014C324F4E48500E47FBA /* WKJNetworking.m in Sources */,
+				950014C424F4E48500E47FBA /* WKJBaseRequest.m in Sources */,
 				95D8F82A24E1164B003BE805 /* UIView+WKJKit.m in Sources */,
 				95D8F82624E1164B003BE805 /* NSString+WKJKit.m in Sources */,
+				950014CC24F4E49000E47FBA /* WKJRouter.m in Sources */,
 				95D8F82824E1164B003BE805 /* UIButton+WKJKit.m in Sources */,
 				95D8F82924E1164B003BE805 /* UIImage+WKJKit.m in Sources */,
 				95D8F83224E1164B003BE805 /* UIColor+WKJKit.m in Sources */,

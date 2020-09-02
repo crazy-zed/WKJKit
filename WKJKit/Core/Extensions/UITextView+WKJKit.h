@@ -20,6 +20,9 @@ typedef void(^WKJTextViewHeightDidChangedBlock)(CGFloat textViewHeight);
 /// 占位文字颜色
 @property (nonatomic, strong) IBInspectable UIColor *wkj_placeholderColor;
 
+/// 文字字数限制
+@property (nonatomic, assign) IBInspectable NSInteger wkj_textLimit;
+
 /// 设置自适应高度
 /// @param maxHeight 最大高度
 /// @param didChanged 高度改变回调

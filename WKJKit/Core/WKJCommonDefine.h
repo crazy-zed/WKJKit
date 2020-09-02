@@ -42,8 +42,8 @@
 #pragma mark - *****************构造器*****************
 // 字体
 #define UIFontMake(fn,fs)        [UIFont fontWithName:fn size:(fs)]
-#define UIFont(fontSize)         UIMakeFont(@"PingFangSC-Regular",fontSize)
-#define UIBoldFont(fontSize)     UIMakeFont(@"PingFangSC-Semibold",fontSize)
+#define UINormalFont(fontSize)   UIFontMake(@"PingFangSC-Regular",fontSize)
+#define UIBoldFont(fontSize)     UIFontMake(@"PingFangSC-Semibold",fontSize)
 
 // 颜色
 #define UIRGBColor(r,g,b,a)      [UIColor colorWithRed:(r)/255.0f green:(g)/255.0f blue:(b)/255.0f alpha:(a)]
