@@ -76,9 +76,11 @@
     }
     
     // 因URLQueryAllowedCharacterSet编码不完全，所以自己进行query编码，再拼接至原编码串
-    hostEncode = [hostEncode stringByReplacingOccurrencesOfString:encodeURL.query withString:@""];
+    if (encodeURL.query.length) {
+        hostEncode = [hostEncode stringByReplacingOccurrencesOfString:encodeURL.query withString:@""];
+    }
+
     NSArray *queryItems = [NSURLComponents componentsWithURL:encodeURL resolvingAgainstBaseURL:NO].queryItems;
-    
     for (NSURLQueryItem *item in queryItems) {
         hostEncode = [hostEncode stringByAppendingFormat:@"%@=%@&", item.name.wkj_URLQueryEncodeString, item.value.wkj_URLQueryEncodeString];
     }

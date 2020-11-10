@@ -264,10 +264,13 @@ WKJInsetsPropertySynthesizer(wkj_responseEdge, setWkj_responseEdge)
         }
 
         UIEdgeInsets rspEdge = [aspectMeta.target wkj_responseEdge];
-        CGRect rspRect = CGRectMake(CGRectGetMinX([aspectMeta.target bounds]) + rspEdge.left,
-                                    CGRectGetMinY([aspectMeta.target bounds]) + rspEdge.top,
-                                    [aspectMeta.target wkj_width] - (rspEdge.left + rspEdge.right),
-                                    [aspectMeta.target wkj_height] - (rspEdge.top + rspEdge.bottom));
+        CGRect bounds = [aspectMeta.target bounds];
+        CGSize size = [aspectMeta.target size];
+        
+        CGRect rspRect = CGRectMake(CGRectGetMinX(bounds) + rspEdge.left,
+                                    CGRectGetMinY(bounds) + rspEdge.top,
+                                    size.width - (rspEdge.left + rspEdge.right),
+                                    size.height - (rspEdge.top + rspEdge.bottom));
 
         BOOL result = CGRectContainsPoint(rspRect, point);
         [aspectMeta.originalInvocation invoke];

@@ -337,7 +337,7 @@ static void wkj_forwardInvocation(__unsafe_unretained id target, SEL selector, N
 @implementation NSObject (WKJKit_Coding)
 
 #pragma mark - Public Methods
-+ (NSArray<NSString *> *)wkj_codingProperties
+- (NSArray<NSString *> *)wkj_codingProperties
 {
     NSArray<NSString *> *properties = objc_getAssociatedObject(self, @selector(wkj_codingProperties));
     if (properties) return properties;
@@ -345,7 +345,7 @@ static void wkj_forwardInvocation(__unsafe_unretained id target, SEL selector, N
     static NSSet<NSString *> *pp_proprities;
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
-        pp_proprities = [self wkj_objectProtocolProperties];
+        pp_proprities = [NSObject wkj_objectProtocolProperties];
     });
     
     NSMutableArray<NSString *> *temp = @[].mutableCopy;

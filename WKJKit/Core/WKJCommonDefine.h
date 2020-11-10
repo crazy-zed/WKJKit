@@ -200,8 +200,6 @@ PopIgnoreWarning
 
 #define WKJInsetsPropertySynthesizer(_getterName, _setterName) _WKJValuePropertySynthesizer(_getterName, _setterName, UIEdgeInsets, UIEdgeInsetsValue)
 
-#define WKJInsetsPropertySynthesizer(_getterName, _setterName) _WKJValuePropertySynthesizer(_getterName, _setterName, UIEdgeInsets, UIEdgeInsetsValue)
-
 #define WKJUIOffsetPropertySynthesizer(_getterName, _setterName) _WKJValuePropertySynthesizer(_getterName, _setterName, UIOffset, UIOffsetValue)
 
 #define WKJTransformPropertySynthesizer(_getterName, _setterName) _WKJValuePropertySynthesizer(_getterName, _setterName, CGAffineTransform, CGAffineTransformValue)

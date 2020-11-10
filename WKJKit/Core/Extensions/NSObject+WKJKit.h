@@ -68,7 +68,7 @@ void doSynchronized(id context, dispatch_block_t block);
 @interface NSObject (WKJKit_Coding)
 
 /// 获取所有需要编码的属性名（包括父类，一直到NS类为止）
-+ (NSArray<NSString *> *)wkj_codingProperties;
+- (NSArray<NSString *> *)wkj_codingProperties;
 
 /// copy协议实现
 - (id)wkj_copyWithZone:(nullable NSZone *)zone;
